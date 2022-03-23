@@ -5,7 +5,7 @@ import { User } from './1user';
 export type order = {
   id?: number;
   status: string;
-  user_id: number;
+  user_id: string;
 };
 export type order_products = {
   quantity: number;
@@ -33,7 +33,7 @@ export class Order {
       throw new Error(`could not get Orders. Error: ${err}`);
     }
   }
-  async create(o: order): Promise<string> {
+  async create(o: order): Promise<order> {
     try {
       const conn = await client.connect();
 

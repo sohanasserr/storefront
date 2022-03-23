@@ -25,20 +25,7 @@ describe('User Model', () => {
   it('should have a delete method', () => {
     expect(store.index).toBeDefined();
   });
-  describe('Manipulate Order methods', () => {
-    const user = new User();
-    beforeAll(async (done) => {
-      await store.create({
-        first_name: 'soha',
-        last_name: 'morsi',
-        password: '12334',
-      });
-      expect(user).toEqual(user);
-      done();
-    });
-    afterAll(async () => {
-      await store.delete(1);
-    });
+
 
     it('should create a user', async () => {
       const u: user = await store.create({
@@ -53,21 +40,21 @@ describe('User Model', () => {
 
     it('should update a user', async () => {
       const u: user = {
-        id: 2,
+        id: 1,
         first_name: '21',
         last_name: '50',
         password:
-          '$2b$10$iXo1AYlxfr2JgnU67bZMlOUZEjXWSt/EHw7KVoxgej9NCplBMxr5u',
+          'soha',
       };
       const res = await store.update(u);
-      expect(res.first_name).toEqual('21');
+      expect(res['first_name']).toEqual('21');
     });
     it('delete method should remove the user', async () => {
-      store.delete(1);
+      store.delete(0);
 
       const result = await store.index();
 
       expect(result).toEqual([]);
     });
   });
-});
+

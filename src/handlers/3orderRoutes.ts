@@ -31,7 +31,7 @@ const create = async (req: Request, res: Response) => {
 
     const enteredOrder: order = {
       status: req.body.status,
-      user_id: parseInt(req.params.user_id),
+      user_id: (req.params.user_id),
     };
 
     const order = await orderRoutes.create(enteredOrder);
@@ -75,7 +75,7 @@ async function update(req: Request, res: Response) {
     const Order: order = {
       id: parseInt(req.params.order_id),
       status: req.body.status,
-      user_id: parseInt(req.params.user_id),
+      user_id: (req.params.user_id),
     };
 
     const result = await orderRoutes.update(Order);

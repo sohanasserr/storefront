@@ -1,5 +1,163 @@
 # Storefront Backend Project
+Storefront Backend Project
 
+## Content 
+    .Decription
+        -file structure 
+        -set up 
+        -run project 
+        -structure of request 
+
+    .Technologies
+    .Tools 
+    .Resources 
+    .Auther
+
+ ## Description 
+
+    Create a RESTful API to be accessible to the frontend developer. writing test, secured user information with encryption, and provide tokens for integration into the frontend.
+
+ ## How to run the project
+        
+        port: 3000
+
+    -set up
+        install an ide for running node (recommended vs code) and browser (chrome)
+        .Description 
+
+    Create a RESTful API to be accessible to the frontend developer. writing test, secured user information with encryption, and provide tokens for integration into the frontend.
+
+    -How to run the project
+        
+        port: 3000
+
+## set up
+        install an ide for running node (recommended vs code) and browser (chrome)
+
+        install node v16.13.2 and npm 8.1.2 and postgres for database
+
+        install as Development Dependencies [npm i --save-dev package@version ex: npm i --save-dev typescript@4.5.4]
+               "@types/body-parser": "^1.19.2",
+                "@types/cors": "^2.8.12",
+                "@types/express": "^4.17.9",
+                "@types/jasmine": "^3.6.3",
+                "@types/jsonwebtoken": "^8.5.8",
+                "@types/pg": "^7.14.7",
+                "@types/supertest": "^2.0.11",
+                "@typescript-eslint/eslint-plugin": "^5.14.0",
+                "@typescript-eslint/parser": "^5.14.0",
+                "eslint": "^8.10.0",
+                "eslint-config-prettier": "^8.5.0",
+                "eslint-plugin-prettier": "^4.0.0",
+                "jasmine": "^4.0.2",
+                "jasmine-spec-reporter": "^7.0.0",
+                "jasmine-ts": "^0.3.0",
+                "prettier": "^2.5.1",
+                "ts-node": "^9.1.1",
+                "tsc-watch": "^4.2.9"
+
+        install as Dependencies [npm i package@version ex: npm i - express@4.17.2]
+           "@types/bcrypt": "^5.0.0",
+           "bcrypt": "^5.0.1",
+           "body-parser": "^1.19.0",
+           "cors": "^2.8.5",
+           "db-migrate": "^0.11.13",
+           "db-migrate-pg": "^1.2.2",
+            "dotenv": "^16.0.0",
+            "express": "^4.17.1",
+            "express-validator": "^6.14.0",
+            "jsonwebtoken": "^8.5.1",
+            "pg": "^8.5.1",
+            "supertest": "^6.2.2",
+            "typescript": "^4.1.3"
+                config scripts for (prettier, eslint, jasmine)
+
+   ## run the project
+
+        create database = "store" and user = "soha" & password ="soha" with postgres as in .env file or name as you want but change the name exist in the .env file after that run the migrations file with [db-migrate up]
+
+   ### Database: 
+                port: 5432
+                create user: create user soha with password 'soha';
+
+                create database: create database store owner soha;
+                                 create database store_test owner soha;
+                
+                grant all on database store to soha;
+                grant all on database store_test to soha;
+
+        if you don't have db-migrate install it [npm i db-migrate , npm i db-migrate db-migrate-pg]!!! 
+
+        after doing the above open the terminal and run:
+            1-npm run prettier --> improve and fix the error of the style of code
+            2-npm run test --> build and test the code and drop the tables if needed
+            3- npm run watch --> run the project
+
+  ### DATABASE SECHEMA AND RELATIONSHIPS:
+       db-migrate create users-table --sql-file
+
+DROP TABLE users;
+
+ 
+
+
+CREATE TABLE users ( "id" SERIAL PRIMARY KEY,
+    "first_name" VARCHAR(150),
+    "last_name" VARCHAR(150),
+    "password" text
+     );
+
+
+db-migrate create products-table --sql-file  
+
+ DROP TABLE products;
+
+
+CREATE TABLE products ( "id" SERIAL PRIMARY KEY,
+    "name" VARCHAR(150),
+    "price" integer,
+    "category" VARCHAR(100)
+     );
+
+db-migrate create orders-table --sql-file  
+
+
+DROP TABLE orders;
+
+
+CREATE TABLE orders ("id" SERIAL PRIMARY KEY,
+"status" VARCHAR(150),
+"user_id" bigint references users(id));
+
+To create the many to many relationship agragate table:
+
+db-migrate create order_products-table --sql-file
+
+Drop TABLE order_products;
+
+CREATE TABLE order_products ("id" serial primary key, 
+"quantity" integer,
+" order_id" bigint REFERENCES orders(id),
+ "product_id" bigint REFERENCES products(id));
+
+
+    
+### Technologies 
+    nodejs 
+    typescript 
+    express 
+    jasmine
+    postgres
+
+### Tools 
+    vs code 
+    google chrome
+
+### Resources 
+    udacity 
+    community slack and toturs 
+    npmjs.com
+    google
 ## Getting Started
 
 This repo contains a basic Node and Express app to get you started in constructing an API. To get started, clone this repo and run `yarn` in your terminal at the project root.
