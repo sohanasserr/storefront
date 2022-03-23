@@ -99,10 +99,10 @@ Storefront Backend Project
        DROP TABLE users;
 
       CREATE TABLE users ( "id" SERIAL PRIMARY KEY,
-     "first_name" VARCHAR(150),
-    "last_name" VARCHAR(150),
-    "password" text
-     );
+      "first_name" VARCHAR(150),
+      "last_name" VARCHAR(150),
+      "password" text
+       );
 
 
         db-migrate create products-table --sql-file  
