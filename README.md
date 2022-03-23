@@ -17,7 +17,7 @@ Storefront Backend Project
 
     Create a RESTful API to be accessible to the frontend developer. writing test, secured user information with encryption, and provide tokens for integration into the frontend.
 
- ## How to run the project
+ ## How To Run The Project
         
         port: 3000
 
@@ -31,7 +31,7 @@ Storefront Backend Project
         
         port: 3000
 
-## set up
+## Setup
         install an ide for running node (recommended vs code) and browser (chrome)
 
         install node v16.13.2 and npm 8.1.2 and postgres for database
@@ -72,7 +72,7 @@ Storefront Backend Project
             "typescript": "^4.1.3"
                 config scripts for (prettier, eslint, jasmine)
 
-   ## run the project
+   ## Run The Project
 
         create database = "store" and user = "soha" & password ="soha" with postgres as in .env file or name as you want but change the name exist in the .env file after that run the migrations file with [db-migrate up]
 
