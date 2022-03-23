@@ -96,49 +96,46 @@ Storefront Backend Project
   ### DATABASE SECHEMA AND RELATIONSHIPS:
        db-migrate create users-table --sql-file
 
-DROP TABLE users;
+       DROP TABLE users;
 
- 
-
-
-CREATE TABLE users ( "id" SERIAL PRIMARY KEY,
-    "first_name" VARCHAR(150),
+      CREATE TABLE users ( "id" SERIAL PRIMARY KEY,
+     "first_name" VARCHAR(150),
     "last_name" VARCHAR(150),
     "password" text
      );
 
 
-db-migrate create products-table --sql-file  
+        db-migrate create products-table --sql-file  
 
- DROP TABLE products;
-
-
-CREATE TABLE products ( "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(150),
-    "price" integer,
-    "category" VARCHAR(100)
-     );
-
-db-migrate create orders-table --sql-file  
+        DROP TABLE products;
 
 
-DROP TABLE orders;
+        CREATE TABLE products ( "id" SERIAL PRIMARY KEY,
+        "name" VARCHAR(150),
+        "price" integer,
+        "category" VARCHAR(100)
+        );
+
+        db-migrate create orders-table --sql-file  
 
 
-CREATE TABLE orders ("id" SERIAL PRIMARY KEY,
-"status" VARCHAR(150),
-"user_id" bigint references users(id));
+        DROP TABLE orders;
 
-To create the many to many relationship agragate table:
 
-db-migrate create order_products-table --sql-file
+        CREATE TABLE orders ("id" SERIAL PRIMARY KEY,
+        "status" VARCHAR(150),
+        "user_id" bigint references users(id));
 
-Drop TABLE order_products;
+        To create the many to many relationship agragate table:
 
-CREATE TABLE order_products ("id" serial primary key, 
-"quantity" integer,
-" order_id" bigint REFERENCES orders(id),
- "product_id" bigint REFERENCES products(id));
+        db-migrate create order_products-table --sql-file
+
+        Drop TABLE order_products;
+
+        CREATE TABLE order_products ("id" serial primary key, 
+        "quantity" integer,
+        " order_id" bigint REFERENCES orders(id),
+        "product_id" bigint REFERENCES products(id));
 
 
     
