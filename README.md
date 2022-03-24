@@ -36,7 +36,8 @@ Storefront Backend Project
             app.put('/updateproducts/:id', update);
             app.delete('/delproducts', destroy);
 
-        order routes: app.get('/orders', index);
+        order routes: 
+            app.get('/orders', index);
             app.get('/users/:user_id/orders/:order_id', show);
             app.post('/users/:user_id/orders', create);
             app.put('/users/:user_id/orders/:order_id', update);
