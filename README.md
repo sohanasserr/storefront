@@ -21,6 +21,28 @@ Storefront Backend Project
         
         port: 3000
 
+        user routes:
+          app.get('/users', index);
+          app.post('/showusers', show);
+          app.post('/createusers', create);
+          app.post('/authusers', verifyAuthToken);
+          app.put('/upusers', update);
+          app.delete('/delusers', destroy);
+
+        product routes:
+            app.get('/products', index);
+            app.post('/createproducts', create);
+            app.post('/showproducts', show);
+            app.put('/updateproducts/:id', update);
+            app.delete('/delproducts', destroy);
+
+        order routes: app.get('/orders', index);
+            app.get('/users/:user_id/orders/:order_id', show);
+            app.post('/users/:user_id/orders', create);
+            app.put('/users/:user_id/orders/:order_id', update);
+            app.delete('/users/:user_id/orders/:order_id', destroy);
+            app.post('/orders/:order_id/products', addProduct);
+
     -set up
         install an ide for running node (recommended vs code) and browser (chrome)
         .Description 
@@ -30,6 +52,7 @@ Storefront Backend Project
     -How to run the project
         
         port: 3000
+
 
 ## Setup
         install an ide for running node (recommended vs code) and browser (chrome)
