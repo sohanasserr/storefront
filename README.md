@@ -54,6 +54,17 @@ Storefront Backend Project
         
         port: 3000
 
+    - ENV File Details:
+    POSTGRES_HOST=127.0.0.1
+    POSTGRES_DB=store
+    POSTGRES_TEST_DB= store_test
+    POSTGRES_USER=soha
+    POSTGRES_PASSWORD=soha
+    ENV=dev
+    BCRYPT_PASSWORD=dasiy-and-duke
+    SALT_ROUNDS=10
+    TOKEN_SECRET=alohomora123!
+
 
 ## Setup
         install an ide for running node (recommended vs code) and browser (chrome)
