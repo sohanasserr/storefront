@@ -143,7 +143,8 @@ Storefront Backend Project
             3- npm run watch --> run the project
 
   ### DATABASE SECHEMA AND RELATIONSHIPS:
-       db-migrate create users-table --sql-file
+  
+      db-migrate create users-table --sql-file
 
       DROP TABLE users CASCADE; 
 
@@ -154,7 +155,7 @@ Storefront Backend Project
        );
 
 
-        db-migrate create products-table --sql-file  
+       db-migrate create products-table --sql-file  
 
        DROP TABLE products CASCADE;
 
