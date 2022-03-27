@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import app from '../../server';
-import { UserStore, User, UserUpdate } from '../../models/user';
+import { UserStore, User, UserUpdate, UserLastOrder } from '../../models/user';
 import Jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
@@ -13,7 +13,7 @@ let user: User;
  
 describe('User handler endpoint', () => {
 
-  console.log('start user handler spec')
+  // console.log('start user handler spec')
 
 
   it('should endpoint create a user', async ():Promise<void> => {
@@ -23,11 +23,11 @@ describe('User handler endpoint', () => {
       password: '1234',
     };
 
-    console.log(u)
+    // console.log(u)
     const result = await httpApp.post('/users/add').send(u);
 
-    console.log(result)
-    
+    // console.log(result)
+
     user= result.body.user as unknown as User;
     token = result.body.token as unknown as string;
   
@@ -43,8 +43,8 @@ describe('User handler endpoint', () => {
 
   it('show method should return the correct user', async ():Promise<void> => {
     const result = await httpApp.get('/users/'+ user.id).set('Authorization', `Bearer ${token}`);
-   const u = result.body as unknown as User;
-    expect(u).toEqual(user);
+   const u = result.body as unknown as UserLastOrder;
+    expect(u.user).toEqual(user);
   });
 
   it('should update a user', async () => {

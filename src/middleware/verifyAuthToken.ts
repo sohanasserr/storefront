@@ -9,7 +9,7 @@ const TOKEN_SECRET: string = process.env.TOKEN_SECRET as unknown as string;
 
 const verifyAuthToken= async (req: Request, res: Response, next: NextFunction):Promise<void> =>{
   try{
-    console.log(req.headers.authorization)
+    // console.log(req.headers.authorization)
     const authorizationHeader = req.headers.authorization as unknown as string;
     const token = authorizationHeader.split(' ')[1];
     

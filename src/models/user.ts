@@ -1,6 +1,8 @@
 import client from '../database';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+import {Order} from '../models/order'
+
 
 dotenv.config();
 const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
@@ -17,6 +19,12 @@ export type UserUpdate = {
   password?: string
  
 };
+export type UserLastOrder= {
+  user:User;
+  lastorders: Order[];
+
+}
+
 
 export class UserStore {
   async index(): Promise<User[]> {

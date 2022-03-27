@@ -1,13 +1,17 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { UserStore, User, UserUpdate } from '../models/user';
+import { OrderStore , Order} from '../models/order';
 import verifyAuthToken from '../middleware/verifyAuthToken';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+
+
 
 dotenv.config();
 
 const TOKEN_SECRET: string = process.env.TOKEN_SECRET as unknown as string;
 const userStore = new UserStore();
+const orderStore = new OrderStore();
 
 const index = async (req: Request, res: Response):Promise<void> => {
   try {
@@ -46,7 +50,9 @@ const show = async (req: Request, res: Response):Promise<void> => {
 
   try {
     const user = await userStore.show(id);
-    res.json(user);
+    const orders= await orderStore.lastFiveOrders(id);
+     
+    res.json({user: user, lastorders: orders});
    
   } catch (err) {
     res.status(400);
@@ -54,6 +60,8 @@ const show = async (req: Request, res: Response):Promise<void> => {
   }
 
 };
+
+
 
 const update = async (req: Request, res: Response):Promise<void> => {
   try {
@@ -103,9 +111,9 @@ const userLogin = async (req: Request, res: Response):Promise<void> => {
   }
 };
 
-const userRoute = async (app: express.Application):Promise<void> => {
+const userRoute =  (app: express.Application) => {
   app.get('/users', verifyAuthToken, index);
-  app.post('/users/:id', verifyAuthToken, show);
+  app.get('/users/:id', verifyAuthToken, show);
   app.post('/users/add', create);
   app.post('/users/login',userLogin);
   app.put('/users/:id',  verifyAuthToken, update);

@@ -18,6 +18,18 @@ enum STATUS {
   'closed',
 }
 
+export type OrderProductsDetails= {
+  id: number;
+  order_id: number;
+  quantity: number;
+  product_id: number;
+  name: string;
+  category: string;
+  price:  number;
+  total: number;
+}
+
+
 export class OrderStore {
   async index(): Promise<Order[]> {
     try {
@@ -85,6 +97,22 @@ export class OrderStore {
       throw new Error(`could not find order ${user_id}. Error: ${err}`);
     }
   }
+
+  async lastFiveOrders( user_id: number): Promise<Order[]> {
+    try {
+      const conn = await client.connect();
+
+      const sql = 'SELECT * FROM orders WHERE user_id=($1) ORDER BY id DESC LIMIT 5';
+
+      const result = await conn.query(sql, [user_id]);
+
+      conn.release();
+
+      return result.rows;
+    } catch (err) {
+      throw new Error(`could not find order ${user_id}. Error: ${err}`);
+    }
+  }
   
   async update(o:Order ): Promise<Order> {
     try {
@@ -139,4 +167,24 @@ export class OrderStore {
         throw new Error(`couldn't add new product ${o_p.order_id}. Error: ${err}`);
       }
     }
+
+    async showOrderProducts(order_id: number): Promise<OrderProductsDetails[]> {
+      try {
+        const conn = await client.connect();
+        
+        const sql =
+          'SELECT op.id, op.order_id, op.quantity, op.product_id, p.name, p.category, p.price, op.quantity * p.price AS total FROM order_products AS op INNER JOIN products AS p ON p.id=op.product_id WHERE op.order_id=$1';
+          
+
+        const result = await conn.query(sql, [order_id]);
+        conn.release();
+
+
+        return result.rows;
+      } catch (err) {
+        throw new Error(`couldn't add new product ${order_id}. Error: ${err}`);
+      }
+    }
+
+
 }
