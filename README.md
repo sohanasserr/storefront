@@ -123,8 +123,8 @@ Storefront Backend Project
                 port: 5432
                 create user: CREATE USER soha WITH PASSWORD 'soha';
 
-                create database: create database store;
-                                 create database store_test;
+                create database: CREATE DATABASE  store;
+                                 CREATE DATABASE  store_test;
                 Grant for dev database
               \c store
              GRANT ALL PRIVILEGES ON DATABASE store TO soha;
@@ -143,7 +143,7 @@ Storefront Backend Project
             3- npm run watch --> run the project
 
   ### DATABASE SECHEMA AND RELATIONSHIPS:
-  
+
       db-migrate create users-table --sql-file
 
       DROP TABLE users CASCADE; 
