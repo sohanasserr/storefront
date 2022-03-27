@@ -126,11 +126,11 @@ Storefront Backend Project
                 create database: CREATE DATABASE  store;
                                  CREATE DATABASE  store_test;
                 Grant for dev database
-              \c store
-             GRANT ALL PRIVILEGES ON DATABASE store TO soha;
-             Grant for test database
-             \c store_test
-             GRANT ALL PRIVILEGES ON DATABASE store_test TO soha;
+                \c store
+                GRANT ALL PRIVILEGES ON DATABASE store TO soha;
+                Grant for test database
+                \c store_test
+                GRANT ALL PRIVILEGES ON DATABASE store_test TO soha;
 
                 
                 
