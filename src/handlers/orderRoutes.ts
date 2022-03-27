@@ -1,20 +1,19 @@
 import express, { Application, Response, Request } from 'express';
-import { Order, order } from '../models/3order';
+import { Order, OrderStore, OrderProducts } from '../models/order';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { Result } from 'express-validator';
 
 dotenv.config();
 const TOKEN_SECRET: string = process.env.TOKEN_SECRET as unknown as string;
 
-const orderRoutes = new Order();
+const orderStore= new OrderStore();
 
 const index = async (req: Request, res: Response) => {
   try {
     const authorizationHeader = req.headers.authorization as unknown as string;
     const token = authorizationHeader.split(' ')[1];
     jwt.verify(token, TOKEN_SECRET);
-    const order = await orderRoutes.index();
+    const order = await orderStore.index();
     res.status(200).json(order);
     //  console.log(order)
   } catch (err) {
@@ -29,12 +28,12 @@ const create = async (req: Request, res: Response) => {
     const token = authorizationHeader.split(' ')[1];
     jwt.verify(token, TOKEN_SECRET);
 
-    const enteredOrder: order = {
+    const enteredOrder: Order = {
       status: req.body.status,
-      user_id: (req.params.user_id),
+      user_id: req.params.user_id as unknown as number,
     };
 
-    const order = await orderRoutes.create(enteredOrder);
+    const order = await orderStore.create(enteredOrder);
     res.status(200).json(order);
   } catch (err) {
     res.status(401);
@@ -50,7 +49,7 @@ const show = async (req: Request, res: Response) => {
     const access = jwt.verify(token, TOKEN_SECRET);
     if (access) {
       try {
-        const result = await orderRoutes.show(
+        const result = await orderStore.show(
           parseInt(req.params.order_id),
           parseInt(req.params.user_id)
         );
@@ -72,13 +71,13 @@ async function update(req: Request, res: Response) {
     const token = authorizationHeader.split(' ')[1];
     jwt.verify(token, TOKEN_SECRET);
 
-    const Order: order = {
+    const order: Order = {
       id: parseInt(req.params.order_id),
       status: req.body.status,
-      user_id: (req.params.user_id),
+      user_id: req.params.user_id as unknown as number,
     };
 
-    const result = await orderRoutes.update(Order);
+    const result = await orderStore.update(order);
      console.log(result)
     res.json(result);
   } catch (err) {
@@ -95,7 +94,7 @@ const destroy = async (req: Request, res: Response) => {
    const access= jwt.verify(token, TOKEN_SECRET);
    if(access) {
      try {
-    const result = await orderRoutes.delete(
+    const result = await orderStore.delete(
       parseInt(req.params.user_id),
       parseInt(req.params.order_id)
     );
@@ -116,14 +115,19 @@ const  addProduct= async (req: Request, res: Response) => {
     const quantity = parseInt(req.body.quantity);
     const order_id = parseInt(req.params.order_id);
     const product_id = parseInt(req.body.product_id);
-//console.log('wew')
+
     const authorizationHeader = (req.headers.authorization as unknown as string);
     const token = authorizationHeader.split(' ')[1];
     const permession = jwt.verify(token, TOKEN_SECRET);
-    //console.log(permession)
+   
     if(permession){
-      const result = await orderRoutes.addProduct( quantity,order_id, product_id);
-       console.log(result)
+      const o_p:OrderProducts= {
+        quantity: quantity,
+        order_id:order_id,
+        product_id:product_id
+      }
+      const result = await orderStore.addProduct(o_p);
+      
       res.json(result);
 
     }

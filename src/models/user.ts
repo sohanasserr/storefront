@@ -1,18 +1,25 @@
 import client from '../database';
-import bcrypt, { hash } from 'bcrypt';
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
 dotenv.config();
 const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
-export type user = {
+export type User = {
   id?: number;
   first_name: string;
   last_name: string;
   password: string;
 };
+export type UserUpdate = {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  password?: string
+ 
+};
 
-export class User {
-  async index(): Promise<user[]> {
+export class UserStore {
+  async index(): Promise<User[]> {
     try {
       const conn = await client.connect();
 
@@ -27,7 +34,7 @@ export class User {
       throw new Error(`Could not get users. Error: ${err}`);
     }
   }
-  async create(u: user): Promise<user> {
+  async create(u: User): Promise<User> {
     try {
       const conn = await client.connect();
 
@@ -51,7 +58,7 @@ export class User {
     }
   }
 
-  async show(id: number): Promise<user> {
+  async show(id: number): Promise<User> {
     try {
       const conn = await client.connect();
 
@@ -67,32 +74,62 @@ export class User {
     }
   }
 
-  async update(u: user): Promise<user> {
+  async update(u: UserUpdate): Promise<User> {
     try {
       const conn = await client.connect();
+      const values = [];
+      let innerSql= '';
+      let count = 0;
+      if(u.first_name){
+        count++;
+        values.push(u.first_name);
+        innerSql += 'first_name=$' + count + ',';
+      }
+      if(u.last_name){
+        count++;
+        values.push(u.last_name);
+        innerSql += 'last_name=$' + count + ',';
+      }
+      if(u.password){
+        count++;
+        const hash = bcrypt.hashSync(
+          u.password + BCRYPT_PASSWORD,
+          parseInt(SALT_ROUNDS as string)
+        );
+        values.push(hash);
+        innerSql += 'password=$' + count + ',';
+      }
 
-      const sql =
-        'UPDATE "users" SET "first_name"=($1) , "last_name"=($2) WHERE "id"=($3) RETURNING *';
+      if(count>=1){ 
+        count++;
+        values.push(u.id);
+        innerSql = innerSql.slice(0, innerSql.length - 1);
+        innerSql += ' WHERE id=$' + count;
+        const sql =
+         'UPDATE users SET ' + innerSql + ' RETURNING *';
 
-      const result = await conn.query(sql, [u.first_name, u.last_name, u.id]);
+      const result = await conn.query(sql, values);
 
       const user = result.rows[0];
       conn.release();
-      // console.log(u.first_name)
-      // console.log(u.last_name)
-      // console.log(u.id)
+     
 
       return user;
+        
+      }else {
+        throw new Error(`unable to update user`);
+      }
+     
     } catch (err) {
       throw new Error(`unable to update user (${u.first_name}. Error: ${err})`);
     }
   }
 
-  async delete(id: number): Promise<user> {
+  async delete(id: number): Promise<User> {
     try {
       const conn = await client.connect();
 
-      const sql = 'DELETE FROM users WHERE id = ($1)';
+      const sql = 'DELETE FROM users WHERE id = ($1) RETURNING *';
 
       const result = await conn.query(sql, [id]);
 
@@ -107,7 +144,7 @@ export class User {
   }
 
   async authenticate(
-    username: number,
+    id: number,
     password: string
   ): Promise<string | null> {
     try {
@@ -115,16 +152,18 @@ export class User {
 
       const sql = 'SELECT * FROM users WHERE id=($1)';
 
-      const result = await conn.query(sql, [username]);
+      const result = await conn.query(sql, [id]);
 
       if (result.rows.length) {
         const user = result.rows[0];
 
         if (bcrypt.compareSync(password + BCRYPT_PASSWORD, user.password)) {
           return user;
+        } else {
+          throw new Error(`user ${id} password doesn't match`);
         }
-      }
-      return null;
+      } else{ throw new Error(`user not found`);}
+      
     } catch (err) {
       throw new Error(`could not authenticate user`);
     }

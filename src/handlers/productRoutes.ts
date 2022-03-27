@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { product, Product } from '../models/2product';
+import { ProductStore, Product, ProductUpdate } from '../models/product';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
@@ -7,7 +7,7 @@ dotenv.config();
 
 const TOKEN_SECRET: string = process.env.TOKEN_SECRET as unknown as string;
 
-const productRoutes = new Product();
+const productRoutes = new ProductStore();
 
 const index = async (_req: Request, res: Response) => {
   try {
@@ -24,7 +24,7 @@ const create = async (req: Request, res: Response) => {
     const token = authorizationHeader.split(' ')[1];
     jwt.verify(token, TOKEN_SECRET);
 
-    const p: product = {
+    const p: Product = {
       name: req.body.name,
       price: req.body.price as unknown as number,
       category: req.body.category,
@@ -55,7 +55,7 @@ const update = async (req: Request, res: Response) => {
     const token = authorizationHeader.split(' ')[1];
     jwt.verify(token, TOKEN_SECRET);
 
-    const p: product = {
+    const p: ProductUpdate = {
       id: req.params.id as unknown as number,
       name: req.body.name,
       price: req.body.price as unknown as number,
@@ -89,9 +89,9 @@ const destroy = async (req: Request, res: Response) => {
 
 const productRoute = (app: express.Application) => {
   app.get('/products', index);
-  app.post('/createproducts', create);
-  app.post('/showproducts', show);
-  app.put('/updateproducts/:id', update);
-  app.delete('/delproducts', destroy);
+  app.post('/products/add', create);
+  app.get('/products/:id', show);
+  app.put('/products/:id', update);
+  app.delete('/products/:id', destroy);
 };
 export default productRoute;

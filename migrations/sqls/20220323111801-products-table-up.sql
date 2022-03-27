@@ -1,5 +1,5 @@
-CREATE TABLE products ( "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(150),
-    "price" integer,
-    "category" VARCHAR(100)
+CREATE TABLE products ( id SERIAL PRIMARY KEY,
+    name VARCHAR(150),
+    price numeric(18,3),
+    category VARCHAR(100)
      );

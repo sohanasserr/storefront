@@ -1,14 +1,21 @@
 import client from '../database';
 
-export type product = {
+export type Product = {
   id?: number;
   name: string;
   price: number;
   category: string;
 };
+export type ProductUpdate = {
+  id: number;
+  name?: string;
+  price?:number;
+  category?: string;
+  
+};
 
-export class Product {
-  async index(): Promise<product[]> {
+export class ProductStore {
+  async index(): Promise<Product[]> {
     try {
       const conn = await client.connect();
 
@@ -24,13 +31,13 @@ export class Product {
     }
   }
 
-  async create(p: product): Promise<product> {
+  async create(p: Product): Promise<Product> {
     try {
       const conn = await client.connect();
 
       const sql =
         'INSERT INTO products (name, price, category) VALUES($1, $2, $3) RETURNING *';
-      console.log(p);
+    
       const result = await conn.query(sql, [p.name, p.price, p.category]);
 
       const product = result.rows[0];
@@ -43,7 +50,7 @@ export class Product {
     }
   }
 
-  async show(id: number): Promise<product> {
+  async show(id: number): Promise<Product> {
     try {
       const conn = await client.connect();
 
@@ -59,21 +66,50 @@ export class Product {
     }
   }
 
-  async update(p: product): Promise<Product> {
+  async update(p: ProductUpdate): Promise<Product> {
     try {
       const conn = await client.connect();
 
-      const sql =
-        'UPDATE products SET name=($1), price=($2), category=($3) WHERE id=($4) RETURNING *; ';
+      const values = [];
+      let innerSql= '';
+      let count = 0;
+      if(p.name){
+        count++;
+        values.push(p.name);
+        innerSql += 'name=$' + count + ',';
+      }
+      if(p.price){
+        count++;
+        values.push(p.price);
+        innerSql += 'price=$' + count + ',';
+      }
+      if(p.category){
+        count++;
+        values.push(p.category);
+        innerSql += 'category=$' + count + ',';
+      }
+     
 
-      const result = await conn.query(sql, [p.name, p.price, p.category, p.id]);
+      if(count>=1){ 
+        count++;
+        values.push(p.id);
+        innerSql = innerSql.slice(0, innerSql.length - 1);
+        innerSql += ' WHERE id=$' + count;
+        const sql =
+         'UPDATE products SET ' + innerSql + ' RETURNING *';
+
+      const result = await conn.query(sql, values);
 
       const product = result.rows[0];
-
       conn.release();
+     
 
       return product;
-    } catch (err) {
+        
+      }else {
+        throw new Error(`unable to update products`);
+      }
+      }catch (err) {
       throw new Error(`could not update product ${p.id}. Error: ${err}`);
     }
   }
@@ -82,7 +118,7 @@ export class Product {
     try {
       const conn = await client.connect();
 
-      const sql = 'DELETE FROM products WHERE id=($1)';
+      const sql = 'DELETE FROM products WHERE id=($1) RETURNING *; ';
 
       const result = await conn.query(sql, [id]);
 
