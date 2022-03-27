@@ -114,17 +114,24 @@ Storefront Backend Project
 
    ## Run The Project
 
-        create database = "store" and user = "soha" & password ="soha" with postgres as in .env file or name as you want but change the name exist in the .env file after that run the migrations file with [db-migrate up]
+        create database = "store" and user = "soha" & password ="soha" with postgres as in .env file 
+        
 
    ### Database: 
                 port: 5432
-                create user: create user soha with password 'soha';
+                create user: CREATE USER soha WITH PASSWORD 'soha';
 
-                create database: create database store user soha;
-                                 create database store_test user soha;
+                create database: create database store;
+                                 create database store_test;
+                Grant for dev database
+              \c store
+             GRANT ALL PRIVILEGES ON DATABASE store TO soha;
+             Grant for test database
+             \c store_test
+             GRANT ALL PRIVILEGES ON DATABASE store_test TO soha;
+
                 
-                grant all on database store to soha;
-                grant all on database store_test to soha;
+                
 
         if you don't have db-migrate install it [npm i db-migrate , npm i db-migrate db-migrate-pg]!!! 
 
