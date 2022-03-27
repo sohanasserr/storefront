@@ -22,27 +22,32 @@ Storefront Backend Project
         port: 3000
 
         user routes:
-          app.get('/users', index);
-          app.post('/showusers', show);
-          app.post('/createusers', create);
-          app.post('/authusers', verifyAuthToken);
-          app.put('/upusers', update);
-          app.delete('/delusers', destroy);
+          app.get('/users', verifyAuthToken, index);
+          app.get('/users/:id', verifyAuthToken, show);
+          app.post('/users/add', create);
+          app.post('/users/login',userLogin);
+          app.put('/users/:id',  verifyAuthToken, update);
+          app.delete('/users/:id', verifyAuthToken, destroy);
 
         product routes:
             app.get('/products', index);
-            app.post('/createproducts', create);
-            app.post('/showproducts', show);
-            app.put('/updateproducts/:id', update);
-            app.delete('/delproducts', destroy);
+            app.post('/products/add', verifyAuthToken, create);
+            app.get('/products/:id', show);
+            app.put('/products/:id', verifyAuthToken, update);
+            app.delete('/products/:id', verifyAuthToken, destroy);
 
         order routes: 
-            app.get('/orders', index);
-            app.get('/users/:user_id/orders/:order_id', show);
-            app.post('/users/:user_id/orders', create);
-            app.put('/users/:user_id/orders/:order_id', update);
-            app.delete('/users/:user_id/orders/:order_id', destroy);
-            app.post('/orders/:order_id/products', addProduct);
+             app.get('/orders', verifyAuthToken, index);
+             app.get('/users/:user_id/orders/:order_id', verifyAuthToken,  show);
+             app.post('/users/:user_id/orders', verifyAuthToken,  create);
+             app.get('/users/:user_id/orders', verifyAuthToken,  userOrders);
+             app.put('/users/:user_id/orders/:order_id', verifyAuthToken,  update);
+             app.delete('/users/:user_id/orders/:order_id', verifyAuthToken,  destroy);
+             app.post('/orders/:order_id/products', verifyAuthToken,  addProduct);
+             app.get('/orders/:order_id/products', verifyAuthToken,  showOrderProducts); 
+
+        dashboard routes:
+             app.get('/top_products', topProducts);     
 
     -set up
         install an ide for running node (recommended vs code) and browser (chrome)
@@ -55,15 +60,15 @@ Storefront Backend Project
         port: 3000
 
     - ENV File Details:
-    POSTGRES_HOST=127.0.0.1
-    POSTGRES_DB=store
-    POSTGRES_TEST_DB= store_test
-    POSTGRES_USER=soha
-    POSTGRES_PASSWORD=soha
-    ENV=dev
-    BCRYPT_PASSWORD=dasiy-and-duke
-    SALT_ROUNDS=10
-    TOKEN_SECRET=alohomora123!
+        POSTGRES_HOST=127.0.0.1
+        POSTGRES_DB=store
+        POSTGRES_TEST_DB= store_test
+        POSTGRES_USER=soha
+        POSTGRES_PASSWORD=soha
+        ENV=dev
+        BCRYPT_PASSWORD=dasiy-and-duke
+        SALT_ROUNDS=10
+        TOKEN_SECRET=alohomora123!
 
 
 ## Setup
@@ -92,20 +97,20 @@ Storefront Backend Project
                 "tsc-watch": "^4.2.9"
 
         install as Dependencies [npm i package@version ex: npm i - express@4.17.2]
-           "@types/bcrypt": "^5.0.0",
-           "bcrypt": "^5.0.1",
-           "body-parser": "^1.19.0",
-           "cors": "^2.8.5",
-           "db-migrate": "^0.11.13",
-           "db-migrate-pg": "^1.2.2",
-            "dotenv": "^16.0.0",
-            "express": "^4.17.1",
-            "express-validator": "^6.14.0",
-            "jsonwebtoken": "^8.5.1",
-            "pg": "^8.5.1",
-            "supertest": "^6.2.2",
-            "typescript": "^4.1.3"
-                config scripts for (prettier, eslint, jasmine)
+                "@types/bcrypt": "^5.0.0",
+                "bcrypt": "^5.0.1",
+                "body-parser": "^1.19.0",
+                "cors": "^2.8.5",
+                "db-migrate": "^0.11.13",
+                "db-migrate-pg": "^1.2.2",
+                "dotenv": "^16.0.0",
+                "express": "^4.17.1",
+                "express-validator": "^6.14.0",
+                "jsonwebtoken": "^8.5.1",
+                "pg": "^8.5.1",
+                "supertest": "^6.2.2",
+                "typescript": "^4.1.3"
+                    config scripts for (prettier, eslint, jasmine)
 
    ## Run The Project
 
@@ -115,8 +120,8 @@ Storefront Backend Project
                 port: 5432
                 create user: create user soha with password 'soha';
 
-                create database: create database store owner soha;
-                                 create database store_test owner soha;
+                create database: create database store user soha;
+                                 create database store_test user soha;
                 
                 grant all on database store to soha;
                 grant all on database store_test to soha;
@@ -131,7 +136,7 @@ Storefront Backend Project
   ### DATABASE SECHEMA AND RELATIONSHIPS:
        db-migrate create users-table --sql-file
 
-       DROP TABLE users;
+      DROP TABLE users CASCADE; 
 
       CREATE TABLE users ( "id" SERIAL PRIMARY KEY,
       "first_name" VARCHAR(150),
@@ -142,24 +147,25 @@ Storefront Backend Project
 
         db-migrate create products-table --sql-file  
 
-        DROP TABLE products;
+       DROP TABLE products CASCADE;
 
 
-        CREATE TABLE products ( "id" SERIAL PRIMARY KEY,
-        "name" VARCHAR(150),
-        "price" integer,
-        "category" VARCHAR(100)
-        );
+       CREATE TABLE products ( id SERIAL PRIMARY KEY,
+       name VARCHAR(150),
+       price numeric(18,3),
+       category VARCHAR(100)
+       );
 
         db-migrate create orders-table --sql-file  
 
 
-        DROP TABLE orders;
+        DROP TABLE orders CASCADE;
 
 
-        CREATE TABLE orders ("id" SERIAL PRIMARY KEY,
-        "status" VARCHAR(150),
-        "user_id" bigint references users(id));
+        CREATE TABLE orders (id SERIAL PRIMARY KEY,
+        status VARCHAR(150),
+        user_id integer references users(id) ON DELETE CASCADE
+        );
 
         To create the many to many relationship agragate table:
 
@@ -167,10 +173,11 @@ Storefront Backend Project
 
         Drop TABLE order_products;
 
-        CREATE TABLE order_products ("id" serial primary key, 
-        "quantity" integer,
-        " order_id" bigint REFERENCES orders(id),
-        "product_id" bigint REFERENCES products(id));
+        CREATE TABLE order_products (id serial primary key, 
+        quantity integer,
+        order_id integer REFERENCES orders(id) ON DELETE CASCADE,
+        product_id integer REFERENCES products(id) ON DELETE CASCADE
+        ) ; 
 
 
     
